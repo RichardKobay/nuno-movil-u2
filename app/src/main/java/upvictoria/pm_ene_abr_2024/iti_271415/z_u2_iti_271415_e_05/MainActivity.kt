@@ -29,6 +29,11 @@ import upvictoria.pm_ene_abr_2024.iti_271415.z_u2_iti_271515_e_05.CameraView
 import upvictoria.pm_ene_abr_2024.iti_271415.z_u2_iti_271515_e_05.LandmarkOverlay
 import androidx.compose.ui.draw.scale
 
+// ✅ --- NEW: Helper function to map a value from one range to another ---
+fun mapRange(value: Double, fromMin: Double, fromMax: Double, toMin: Double, toMax: Double): Double {
+    return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin)
+}
+
 class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher =
@@ -68,12 +73,9 @@ class MainActivity : ComponentActivity() {
 fun RoboticArmVisionScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    // State to hold the latest pose detection result
     var poseResult by remember { mutableStateOf<PoseLandmarkerResult?>(null) }
 
-    // Initialize the detectors
     val armController = remember { ArmController() }
-
     val renderer = remember { RenderObj(context) }
     val poseDetector = remember {
         PoseDetector(
@@ -84,19 +86,36 @@ fun RoboticArmVisionScreen(modifier: Modifier = Modifier) {
         )
     }
 
-    // ✅ 2. Use LaunchedEffect to react to new pose results
+    // This effect block will now run every time a new poseResult is detected
     LaunchedEffect(poseResult) {
         poseResult?.let { result ->
-            // Calculate angles from the latest result
             val angles = armController.getJointAngles(result)
             if (angles != null) {
-                // Map the calculated angles to the robot arm's rotation
-                // These mapping values may need tweaking for best results
-                val armLowAngle = (angles.shoulder - 90) * -1 // Map shoulder elevation
-                val armHighAngle = (180 - angles.elbow) * -1  // Map elbow flexion
 
-                renderer.setArmLowRotation(armLowAngle.toDouble())
-                renderer.setArmHighRotation(armHighAngle.toDouble())
+                // ✅ --- FIX: Use mapRange for accurate and tunable control ---
+
+                // Map shoulder elevation to the robot's lower arm rotation.
+                // Human arm down (180deg) to horizontal (90deg) -> Robot arm low (-10deg) to high (50deg)
+                val armLowAngle = mapRange(
+                    value = angles.shoulderElevation.toDouble(),
+                    fromMin = 180.0,
+                    fromMax = 90.0,
+                    toMin = -10.0,
+                    toMax = 50.0
+                )
+
+                // Map elbow angle to the robot's upper arm rotation.
+                // Human arm bent (~60deg) to straight (180deg) -> Robot arm high (-40deg) to low (20deg)
+                val armHighAngle = mapRange(
+                    value = angles.elbowAngle.toDouble(),
+                    fromMin = 60.0,
+                    fromMax = 180.0,
+                    toMin = -40.0,
+                    toMax = 20.0
+                )
+
+                renderer.setArmLowRotation(armLowAngle)
+                renderer.setArmHighRotation(armHighAngle)
             }
         }
     }
