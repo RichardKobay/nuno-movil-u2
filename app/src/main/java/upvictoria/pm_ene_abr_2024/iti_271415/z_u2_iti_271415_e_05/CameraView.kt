@@ -1,4 +1,4 @@
-package upvictoria.pm_ene_abr_2024.iti_271415.z_u2_iti_271515_e_05
+package upvictoria.pm_ene_abr_2024.iti_271415.z_u2_iti_271415_e_05
 
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
-import upvictoria.pm_ene_abr_2024.iti_271415.z_u2_iti_271415_e_05.PoseDetector
 import java.util.concurrent.Executors
 
 // ✅ --- FIX 1: Define landmarks for BOTH arms ---
