@@ -22,7 +22,7 @@ import java.util.concurrent.Executors
 // ✅ --- FIX 1: Define landmarks for BOTH arms ---
 private object LandmarkConnections {
     // Left Arm
-    const val LEFT_SHOULDER = 11
+    /* const val LEFT_SHOULDER = 11
     const val LEFT_ELBOW = 13
     const val LEFT_WRIST = 15
     const val LEFT_PINKY = 17
@@ -57,7 +57,20 @@ private object LandmarkConnections {
     )
 
     // Define all the points we care about drawing
+    val allPoints = connections.flatMap { listOf(it.first, it.second) }.toSet() */
+
+    // Solo mantener las conexiones para el brazo que estás detectando
+    const val SHOULDER = 12 // Cambiar a 11 para izquierdo
+    const val ELBOW = 14    // Cambiar a 13 para izquierdo
+    const val WRIST = 16    // Cambiar a 15 para izquierdo
+
+    val connections = listOf(
+        SHOULDER to ELBOW,
+        ELBOW to WRIST
+    )
+
     val allPoints = connections.flatMap { listOf(it.first, it.second) }.toSet()
+
 }
 
 

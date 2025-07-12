@@ -104,9 +104,31 @@ fun CombinedControlScreen(modifier: Modifier = Modifier) {
                     toMax = 20.0   // Robot arm straightest
                 )
 
+                // ✅ 1. Rotación horizontal (A2+/-)
+                val wristRotation = mapRange(
+                    value = angles.forearmRotation.toDouble(),
+                    fromMin = -90.0,
+                    fromMax = 90.0,
+                    toMin = -45.0,
+                    toMax = 45.0
+                )
+
+                // ✅ 2. Elevación vertical (estirado vs encogido)
+                val wristElevation = mapRange(
+                    value = angles.forearmElevation.toDouble(),
+                    fromMin = 30.0,   // Brazo doblado (ejemplo)
+                    fromMax = 180.0,   // Brazo estirado
+                    toMin = 0.0,       // Posición encogida del robot
+                    toMax = 60.0       // Posición estirada del robot
+                )
+
                 // Update the robot's joints
                 renderer.setArmLowRotation(armLowAngle)
                 renderer.setArmHighRotation(armHighAngle)
+                renderer.setWristRotation(wristRotation)
+                renderer.setWristElevation(wristElevation)
+
+
             }
         }
     }

@@ -198,4 +198,17 @@ class RenderObj(context: Context) : Renderer(context) {
             }
         }
     }
+
+    // En RenderObj.kt
+    fun setWristRotation(degrees: Double) {
+        val wrist = objects[R.raw.wrist_2] ?: return
+        wrist.rotZ = degrees.coerceIn(-45.0, 45.0)
+    }
+
+    fun setWristElevation(degrees: Double) {
+        val forearm = objects[R.raw.arm_2] ?: return
+        forearm.rotY = degrees.coerceIn(0.0, 60.0)
+    }
+
+
 }
